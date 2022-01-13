@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 2.8.2)
+
+project(sdl-download NONE)
+
+include(ExternalProject)
+ExternalProject_Add(sdl
+        GIT_REPOSITORY    https://github.com/libsdl-org/SDL.git
+        GIT_TAG           release-2.0.20
+        SOURCE_DIR        "${CMAKE_BINARY_DIR}/sdl-src"
+        BINARY_DIR        "${CMAKE_BINARY_DIR}/sdl-build"
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND     ""
+        INSTALL_COMMAND   ""
+        TEST_COMMAND      ""
+        )
+
+ExternalProject_Get_Property(sdl source_dir)
+set(SDL_INCLUDE_DIR ${CMAKE_BINARY_DIR}/sdl-src/include)
+
