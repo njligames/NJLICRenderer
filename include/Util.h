@@ -1,8 +1,8 @@
 //
 //  Util.h
 //
-//
-//  Created by James Folk on 2/23/20.
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #ifndef Util_h
@@ -200,17 +200,22 @@ public:
 
         shader = glCreateShader(type);
         glShaderSource(shader, 1, &_source, NULL);
+        Util::glErrorCheck();
         glCompileShader(shader);
+        Util::glErrorCheck();
 
         glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+        Util::glErrorCheck();
         if (status == GL_FALSE) {
             glDeleteShader(shader);
 
             GLint logLength;
             glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+            Util::glErrorCheck();
             if (logLength > 0) {
                 GLchar *log = (GLchar *)malloc(logLength);
                 glGetShaderInfoLog(shader, logLength, &logLength, log);
+                Util::glErrorCheck();
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                              "Shader compile log:\n%s", log);
                 free(log);
@@ -249,14 +254,18 @@ public:
         GLint status(GL_FALSE);
 
         glValidateProgram(programPointer);
+        Util::glErrorCheck();
 
         glGetProgramiv(programPointer, GL_VALIDATE_STATUS, &status);
+        Util::glErrorCheck();
         if (status == GL_FALSE) {
             GLint logLength;
             glGetProgramiv(programPointer, GL_INFO_LOG_LENGTH, &logLength);
+            Util::glErrorCheck();
             if (logLength > 0) {
                 GLchar *log = (GLchar *)malloc(logLength);
                 glGetProgramInfoLog(programPointer, logLength, &logLength, log);
+                Util::glErrorCheck();
                 SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
                              "Program validate log:\n%s", log);
                 free(log);

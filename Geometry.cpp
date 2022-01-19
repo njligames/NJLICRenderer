@@ -1,9 +1,8 @@
 //
 //  Geometry.cpp
-//  VerizonTest
 //
-//  Created by James Folk on 6/27/16.
-//  Copyright © 2016 NJLIGames Ltd. All rights reserved.
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #include "Geometry.h"
@@ -448,7 +447,7 @@ namespace NJLICRenderer {
             // set LightSourcePosition_worldspace.w == 0 for DirectionalLight
             // set LightSourcePosition_worldspace.w != 0 for PointlLight
             shader->setUniformValue("LightSourcePosition_worldspace",
-                                    glm::vec4(-3.0f, -1.5f, -1.0f, 1.0));
+                                    glm::vec4(0.0f, 0.0f, 0.0f, 1.0));
 
             shader->setUniformValue("LightSourceSpotDirection",
                                     glm::vec3(0.0f, 0.0f, 1.0f));

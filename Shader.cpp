@@ -1,9 +1,8 @@
 //
 //  Shader.cpp
-//  VerizonTest
 //
-//  Created by James Folk on 6/21/16.
-//  Copyright © 2016 NJLIGames Ltd. All rights reserved.
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #include "Shader.h"
@@ -36,6 +35,7 @@ namespace NJLICRenderer {
         GLuint vertShader, fragShader;
 
         m_Program = glCreateProgram();
+        Util::glErrorCheck();
 
         if (!Util::compileShader(vertShader, GL_VERTEX_SHADER,
                                     vertexSource)) {
@@ -48,21 +48,26 @@ namespace NJLICRenderer {
         }
 
         glAttachShader(m_Program, vertShader);
+        Util::glErrorCheck();
         glAttachShader(m_Program, fragShader);
+        Util::glErrorCheck();
 
         if (!Util::linkProgram(m_Program)) {
             printf("Failed to link program: %d", m_Program);
 
             if (vertShader) {
                 glDeleteShader(vertShader);
+                Util::glErrorCheck();
                 vertShader = 0;
             }
             if (fragShader) {
                 glDeleteShader(fragShader);
+                Util::glErrorCheck();
                 fragShader = 0;
             }
             if (m_Program) {
                 glDeleteProgram(m_Program);
+                Util::glErrorCheck();
                 m_Program = 0;
             }
 
@@ -76,9 +81,11 @@ namespace NJLICRenderer {
         // Release vertex and fragment shaders.
         if (vertShader) {
             glDeleteShader(vertShader);
+            Util::glErrorCheck();
         }
         if (fragShader) {
             glDeleteShader(fragShader);
+            Util::glErrorCheck();
         }
 
         //        if (!linkProgram(m_Program)) {
@@ -131,6 +138,7 @@ namespace NJLICRenderer {
 
     int Shader::getAttributeLocation(const std::string &attributeName) const {
         int location = glGetAttribLocation(m_Program, attributeName.c_str());
+        Util::glErrorCheck();
 
 #if defined(DEBUG)
         if (location == -1) {
@@ -180,9 +188,11 @@ namespace NJLICRenderer {
     bool Shader::setUniformValue(const std::string &uniformName,
                                  GLfloat *matrix4x4, bool transpose) {
         int location = getUniformLocation(uniformName);
+        Util::glErrorCheck();
         if (location != -1) {
             glUniformMatrix4fv(location, 1, (transpose) ? GL_TRUE : GL_FALSE,
                                matrix4x4);
+            Util::glErrorCheck();
             return true;
         }
         return false;
@@ -278,6 +288,44 @@ namespace NJLICRenderer {
             glGetUniformfv(m_Program, location, m_vec4Buffer);
 
             memcpy(&value[0], m_vec4Buffer, sizeof(glm::vec4));
+
+            return true;
+        }
+        return false;
+    }
+
+    bool Shader::setUniformValue(const char *uniformName, float f1,
+                                        float f2)
+    {
+        int location = getUniformLocation(uniformName);
+        if (location != -1)
+        {
+            float oldValue1, oldValue2;
+            if (getUniformValue(uniformName, oldValue1, oldValue2))
+            {
+                if (oldValue1 == f1)
+                    return true;
+                if (oldValue2 == f2)
+                    return true;
+            }
+
+            glUniform2f(location, f1, f2);
+
+            return true;
+        }
+        return false;
+    }
+
+    bool Shader::getUniformValue(const char *uniformName, float &f1,
+                                        float &f2)
+    {
+        int location = getUniformLocation(uniformName);
+        if (location != -1)
+        {
+            glGetUniformfv(m_Program, location, m_vec4Buffer);
+
+            f1 = m_vec4Buffer[0];
+            f2 = m_vec4Buffer[1];
 
             return true;
         }

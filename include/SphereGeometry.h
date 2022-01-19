@@ -1,5 +1,8 @@
 //
-// Created by James Folk on 1/5/22.
+// SphereGeometry.h
+//
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #ifndef DISCOVERYTESTING_SPHEREGEOMETRY_H

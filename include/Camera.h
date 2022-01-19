@@ -1,9 +1,8 @@
 //
 //  Camera.hpp
-//  VerizonTest
 //
-//  Created by James Folk on 6/21/16.
-//  Copyright © 2016 NJLIGames Ltd. All rights reserved.
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #ifndef Camera_hpp
@@ -12,6 +11,7 @@
 #include "GraphicsPlatform.h"
 
 #include "glm/glm.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace NJLICRenderer {
     class Node;
@@ -19,6 +19,7 @@ namespace NJLICRenderer {
 
     class Camera {
         friend class Geometry;
+        friend class DebugDrawer;
 
       public:
         /* static */
@@ -59,6 +60,11 @@ namespace NJLICRenderer {
 
         void lookAt(const glm::vec3 &pos,
                     const glm::vec3 &up = glm::vec3(0, 1.0f, 0));
+
+        // // these positions must be in range [-1, 1] (!!!), not [0, width] and [0, height]
+        // float mouseX = getMousePositionX() / (getWindowWidth()  * 0.5f) - 1.0f;
+        // float mouseY = getMousePositionY() / (getWindowHeight() * 0.5f) - 1.0f;
+        glm::vec3 createRay(float mouseX, float mouseY, glm::vec3 direction, glm::vec3 up) ;
 
       protected:
         void render(Shader *const shader, bool shouldRedraw = false);

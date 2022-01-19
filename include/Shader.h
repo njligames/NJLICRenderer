@@ -1,9 +1,8 @@
 //
 //  Shader.hpp
-//  VerizonTest
 //
-//  Created by James Folk on 6/21/16.
-//  Copyright © 2016 NJLIGames Ltd. All rights reserved.
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #ifndef Shader_hpp
@@ -42,7 +41,6 @@ namespace NJLICRenderer {
                              const glm::mat4x4 &value, bool transpose = false);
         bool setUniformValue(const std::string &uniformName, GLfloat *matrix4x4,
                              bool transpose = false);
-
         bool getUniformValue(const std::string &uniformName,
                              glm::mat4x4 &value);
 
@@ -50,15 +48,16 @@ namespace NJLICRenderer {
         bool getUniformValue(const char *uniformName, int &value);
 
         bool setUniformValue(const char *uniformName, const glm::vec3 &value);
-
         bool getUniformValue(const char *uniformName, glm::vec3 &value);
 
         bool setUniformValue(const char *uniformName, float value);
         bool getUniformValue(const char *uniformName, float &value);
 
         bool setUniformValue(const char *uniformName, const glm::vec4 &value);
-
         bool getUniformValue(const char *uniformName, glm::vec4 &value);
+
+        bool setUniformValue(const char *uniformName, float f1, float f2);
+        bool getUniformValue(const char *uniformName, float &f1, float &f2);
 
       protected:
         GLuint compileShader(const std::string &source, GLenum type);

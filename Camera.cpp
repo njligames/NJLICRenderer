@@ -1,9 +1,8 @@
 //
 //  Camera.cpp
-//  VerizonTest
 //
-//  Created by James Folk on 6/21/16.
-//  Copyright © 2016 NJLIGames Ltd. All rights reserved.
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #include "Camera.h"
@@ -254,6 +253,23 @@ namespace NJLICRenderer {
             getNodeOwner()->getOrigin().y, getNodeOwner()->getOrigin().z,
             target.x, target.y, target.z, up.x, up.y, up.z));
         *mProjectionMatrix = _btTransform;
+    }
+
+    glm::vec3 Camera::createRay(float mouseX, float mouseY, glm::vec3 direction, glm::vec3 up) {
+        // these positions must be in range [-1, 1] (!!!), not [0, width] and [0, height]
+
+        Node *node(getNodeOwner());
+
+        glm::mat4 proj = glm::perspective(m_Fov, m_AspectRatio, m_Near, m_Far);
+        glm::mat4 view = glm::lookAt(node->getOrigin(), direction, up);
+
+        glm::mat4 invVP = glm::inverse(proj * view);
+        glm::vec4 screenPos = glm::vec4(mouseX, -mouseY, 1.0f, 1.0f);
+        glm::vec4 worldPos = invVP * screenPos;
+
+        glm::vec3 dir = glm::normalize(glm::vec3(worldPos));
+
+        return dir;
     }
 
     void Camera::render(Shader *const shader, bool shouldRedraw) {

@@ -1,8 +1,8 @@
 //
 //  MaterialProperty.cpp
-//  SDLSkeleton
 //
-//  Created by James Folk on 2/29/20.
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #include "MaterialProperty.h"
@@ -201,7 +201,7 @@ namespace NJLICRenderer {
         //                 buffer);
 
         glTexImage2D(GL_TEXTURE_2D, 0, internalformat, GLsizei(width),
-                     GLsizei(height), 0, GL_RGB, GL_UNSIGNED_BYTE,
+                     GLsizei(height), 0, GL_RGBA, GL_UNSIGNED_BYTE,
                      diffuseFileData);
         Util::glErrorCheck();
 

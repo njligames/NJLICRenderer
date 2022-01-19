@@ -1,9 +1,8 @@
 //
 //  Node.cpp
-//  VerizonTest
 //
-//  Created by James Folk on 6/21/16.
-//  Copyright © 2016 NJLIGames Ltd. All rights reserved.
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #include "Node.h"

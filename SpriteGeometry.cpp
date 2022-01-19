@@ -1,8 +1,8 @@
 //
 //  SpriteGeometry.cpp
-//  SDLSkeleton
 //
-//  Created by James Folk on 2/24/20.
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #include "SpriteGeometry.h"

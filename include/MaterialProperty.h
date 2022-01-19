@@ -1,8 +1,8 @@
 //
 //  MaterialProperty.h
-//  SDLSkeleton
 //
-//  Created by James Folk on 2/29/20.
+//  Created by James Folk on 1/17/22.
+//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
 //
 
 #ifndef MaterialProperty_h
