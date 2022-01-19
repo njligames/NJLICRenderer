@@ -15,7 +15,6 @@ namespace NJLICRenderer {
     class BackgroundRenderer {
         static BackgroundRenderer *sBackgroundRenderer;
 
-
         Shader *mShader;
 
         GLuint mVao;
@@ -38,6 +37,7 @@ namespace NJLICRenderer {
 
         void init(const std::string &filePath);
         void unInit();
+        void reload(const std::string &filePath);
         void render(GLuint width, GLuint height);
     };
 } // namespace NJLICRenderer

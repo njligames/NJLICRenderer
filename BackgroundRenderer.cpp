@@ -192,6 +192,12 @@ namespace NJLICRenderer {
         glDeleteBuffers(GLsizei(1), &mIndexBuffer);
         free(mBufferData);
     }
+    void BackgroundRenderer::reload(const std::string &filePath) {
+        mBufferData = (unsigned char *)Util::loadImage(
+                filePath, &mwidth, &mheight,
+                &mchannels_in_file);
+        mShouldReload = true;
+    }
     void BackgroundRenderer::render(GLuint width, GLuint height) {
 
         glViewport(0, 0, width, height );
