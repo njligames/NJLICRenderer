@@ -7,12 +7,25 @@
 
 #include "Node.h"
 #include "Camera.h"
+#include "Camera2.h"
 #include "Geometry.h"
 
 #include <assert.h>
 #include <iostream>
 
 namespace NJLICRenderer {
+
+    void Node::update(Publisher *who, void *userdata) {
+        if(userdata) {
+
+            glm::vec3 origin;
+            memcpy(&origin, userdata, sizeof(glm::vec3));
+            setOrigin(origin);
+
+           // = static_cast<glm::vec3>(userdata);
+        }
+    }
+
     Node::Node()
         : m_Name("NODE"), mScale(new glm::vec3(1.0f, 1.0f, 1.0f)),
           mTransform(new glm::mat4(1)), m_ParentNode(NULL), m_Camera(NULL),
@@ -52,6 +65,13 @@ namespace NJLICRenderer {
     void Node::removeCamera() { m_Camera = NULL; }
 
     Camera *Node::getCamera() { return m_Camera; }
+
+    void Node::addCamera2(Camera2 *camera) {
+        m_Camera2 = camera;
+        camera->nodeOwner(this);
+    }
+    void Node::removeCamera2() {m_Camera2 = nullptr;}
+    Camera2 *Node::getCamera2() { return m_Camera2;}
 
     void Node::addGeometry(Geometry *geometry) {
         assert(geometry);

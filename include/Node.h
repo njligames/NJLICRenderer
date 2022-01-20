@@ -16,17 +16,23 @@
 #include "glm/gtx/quaternion.hpp"
 
 #include "glm/gtx/transform.hpp"
+#include "PubSub.h"
 
 namespace NJLICRenderer {
     class Camera;
+    class Camera2;
     class Geometry;
 
     class TornadoData;
 
-    class Node {
+    class Node : public Subscriber{
         friend class Geometry;
         friend class Scene;
         friend class SpriteGeometry;
+
+    protected:
+        virtual void update(Publisher *who, void *userdata = 0) override ;
+
 
       public:
         /* members */
@@ -41,6 +47,10 @@ namespace NJLICRenderer {
         void addCamera(Camera *camera);
         void removeCamera();
         Camera *getCamera();
+
+        void addCamera2(Camera2 *camera);
+        void removeCamera2();
+        Camera2 *getCamera2();
 
         void addGeometry(Geometry *body);
         void removeGeometry();
@@ -130,6 +140,7 @@ namespace NJLICRenderer {
         std::vector<Node *> m_ChildrenNodes;
 
         Camera *m_Camera;
+        Camera2 *m_Camera2;
         Geometry *m_Geometry;
         unsigned long m_GeometryIndex;
 

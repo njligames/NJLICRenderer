@@ -41,6 +41,7 @@ add_library(NJLICRenderer
         DebugDrawer.cpp
         PubSub.cpp
         BitmapFont.cpp
+        Camera2.cpp
         )
 target_compile_definitions(NJLICRenderer PUBLIC __GL_2__=1)
 target_include_directories(NJLICRenderer PUBLIC "platform/macos" "include")

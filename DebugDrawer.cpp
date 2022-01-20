@@ -330,56 +330,6 @@ namespace NJLICRenderer
             static_cast<std::size_t>(textureId));
     }
 
-    void DebugDrawer::drawLine(const glm::vec3 &from, const glm::vec3 &to,
-                                    const glm::vec3 &color)
-    {
-        const float _from[] = {from.x, from.y, from.z};
-        const float _to[] = {to.x, to.y, to.z};
-        const float _color[] = {color.x, color.y, color.z};
-
-        dd::line(_from, _to, _color);
-    }
-
-    void DebugDrawer::drawContactPoint(const glm::vec3 &PointOnB,
-                                            const glm::vec3 &normalOnB,
-                                            float distance, int lifeTime,
-                                            const glm::vec3 &color)
-    {
-        const float _pos[] = {PointOnB.x, PointOnB.y, PointOnB.z};
-        const float _color[] = {color.x, color.y, color.z};
-        dd::point(_pos, _color, 1.0, lifeTime);
-
-
-        glm::vec3 normal(glm::normalize(normalOnB));
-        float len(normalOnB.length());
-
-        glm::vec3 from(PointOnB);
-        glm::vec3 to(PointOnB + (normal * len));
-        const float _from[] = {from.x, from.y, from.z};
-        const float _to[] = {to.x, to.y, to.z};
-
-        dd::line(_from, _to, _color, lifeTime);
-    }
-
-    void DebugDrawer::reportErrorWarning(const char *warningString)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_TEST, "%s", warningString);
-    }
-
-    void DebugDrawer::draw3dText(const glm::vec3 &location,
-                                      const char *textString)
-    {
-        glm::vec3 color(1.0, 1.0, 1.0);
-
-        const float _pos[] = {location.x, location.y, location.z};
-        const float _color[] = {color.x, color.y, color.z};
-
-        dd::projectedText(
-            std::string(textString).c_str(), _pos, _color, m_textMat4Buffer, 0, 0,
-            mWidth,
-            mHeight);
-    }
-
     void DebugDrawer::init()
     {
         if (!m_Initialized)
@@ -396,16 +346,6 @@ namespace NJLICRenderer
             // use gl_PointSize.
 
 //            glEnable(GL_PROGRAM_POINT_SIZE);
-
-            GLint  t;
-            glGetIntegerv(GL_LINE_WIDTH, &t);
-            std::cout << t << std::endl;
-            glLineWidth(10);
-            glGetIntegerv(GL_LINE_WIDTH, &t);
-            std::cout << t << std::endl;
-
-
-
 
             m_LinePointShaderProgram->load(linePointVertShaderSource,
                                            linePointFragShaderSource);
@@ -446,7 +386,8 @@ namespace NJLICRenderer
 
         if (dd::hasPendingDraws())
         {
-            dd::flush(1);
+            auto ticks(SDL_GetTicks());
+            dd::flush(ticks);
         }
     }
 

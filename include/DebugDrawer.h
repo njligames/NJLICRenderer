@@ -33,6 +33,13 @@ namespace NJLICRenderer
     
   class DebugDrawer : public dd::RenderInterface
   {
+  protected:
+      virtual void drawPointList(const dd::DrawVertex *, int, bool);
+      virtual void drawLineList(const dd::DrawVertex *, int, bool);
+      virtual void drawGlyphList(const dd::DrawVertex *, int,
+                                 dd::GlyphTextureHandle);
+      virtual void destroyGlyphTexture(dd::GlyphTextureHandle);
+      virtual dd::GlyphTextureHandle createGlyphTexture(int, int, const void *);
   public:
     DebugDrawer();
     virtual ~DebugDrawer();
@@ -42,22 +49,7 @@ namespace NJLICRenderer
     virtual void beginDraw();
     virtual void endDraw();
 #endif
-    virtual void drawPointList(const dd::DrawVertex *, int, bool);
-    virtual void drawLineList(const dd::DrawVertex *, int, bool);
-    virtual void drawGlyphList(const dd::DrawVertex *, int,
-                               dd::GlyphTextureHandle);
-    virtual void destroyGlyphTexture(dd::GlyphTextureHandle);
-    virtual dd::GlyphTextureHandle createGlyphTexture(int, int, const void *);
-
-    virtual void drawLine(const glm::vec3 &from, const glm::vec3 &to,
-                          const glm::vec3 &color);
-    virtual void drawContactPoint(const glm::vec3 &PointOnB,
-                                  const glm::vec3 &normalOnB, float distance,
-                                  int lifeTime, const glm::vec3 &color);
-    virtual void reportErrorWarning(const char *warningString);
-    virtual void draw3dText(const glm::vec3 &location, const char *textString);
-
-     inline bool isInitialized()const{return m_Initialized;}
+    inline bool isInitialized()const{return m_Initialized;}
     void init();
     void unInit();
     void draw(Camera *camera);
@@ -75,7 +67,7 @@ namespace NJLICRenderer
      @param depthEnabled <#depthEnabled description#>
      */
     void point(const glm::vec3 &pos, const glm::vec3 &color, float size = 1.0f,
-               int durationMillis = 10000, bool depthEnabled = true);
+               int durationMillis = 0, bool depthEnabled = true);
 
     /**
      Add a 3D line to the debug draw queue. Note that
@@ -89,7 +81,7 @@ namespace NJLICRenderer
      @param depthEnabled <#depthEnabled description#>
      */
     void line(const glm::vec3 &from, const glm::vec3 &to,
-              const glm::vec3 &color = glm::vec3(1.0, 0.0, 0.0), int durationMillis = 10000,
+              const glm::vec3 &color = glm::vec3(1.0, 0.0, 0.0), int durationMillis = 0,
               bool depthEnabled = true);
 
     /**
@@ -108,7 +100,7 @@ namespace NJLICRenderer
      */
     void screenText(const std::string &str, const glm::vec3 &pos,
                     const glm::vec3 &color, float scaling = 1.0f,
-                    int durationMillis = 10000);
+                    int durationMillis = 0);
 
     /**
      Add a 3D text label centered at the given world position that
@@ -125,7 +117,7 @@ namespace NJLICRenderer
      */
     void projectedText(const std::string &str, const glm::vec3 &pos,
                        const glm::vec3 &color, float scaling = 1.0f,
-                       int durationMillis = 10000);
+                       int durationMillis = 0);
 
     /**
      Add a set of three coordinate axis depicting the position and orientation
@@ -141,7 +133,7 @@ namespace NJLICRenderer
      */
       void axisTriad(const glm::mat4 &transform,
                    float size, float length,
-                   int durationMillis = 10000,
+                   int durationMillis = 0,
                    bool depthEnabled = true);
 
     /**
@@ -157,7 +149,7 @@ namespace NJLICRenderer
      @param depthEnabled <#depthEnabled description#>
      */
     void arrow(const glm::vec3 &from, const glm::vec3 &to,
-               const glm::vec3 &color, float size, int durationMillis = 10000,
+               const glm::vec3 &color, float size, int durationMillis = 0,
                bool depthEnabled = true);
 
     /**
@@ -171,7 +163,7 @@ namespace NJLICRenderer
      @param durationMillis <#durationMillis description#>
      @param depthEnabled <#depthEnabled description#>
      */
-    void cross(const glm::vec3 &center, float length, int durationMillis = 10000,
+    void cross(const glm::vec3 &center, float length, int durationMillis = 0,
                bool depthEnabled = true);
 
     /**
@@ -187,7 +179,7 @@ namespace NJLICRenderer
      */
     void circle(const glm::vec3 &center, const glm::vec3 &planeNormal,
                 const glm::vec3 &color, float radius, float numSteps,
-                int durationMillis = 10000, bool depthEnabled = true);
+                int durationMillis = 0, bool depthEnabled = true);
 
     /**
      Add a wireframe plane in 3D space to the debug draw queue.
@@ -205,7 +197,7 @@ namespace NJLICRenderer
      */
     void plane(const glm::vec3 &center, const glm::vec3 &planeNormal,
                const glm::vec3 &planeColor, const glm::vec3 &normalVecColor,
-               float planeScale, float normalVecScale, int durationMillis = 10000,
+               float planeScale, float normalVecScale, int durationMillis = 0,
                bool depthEnabled = true);
 
     /**
@@ -218,7 +210,7 @@ namespace NJLICRenderer
      @param depthEnabled <#depthEnabled description#>
      */
     void sphere(const glm::vec3 &center, const glm::vec3 &color, float radius,
-                int durationMillis = 10000, bool depthEnabled = true);
+                int durationMillis = 0, bool depthEnabled = true);
 
     /**
      Add a wireframe cone to the debug draw queue.
@@ -236,7 +228,7 @@ namespace NJLICRenderer
      */
     void cone(const glm::vec3 &apex, const glm::vec3 &dir,
               const glm::vec3 &color, float baseRadius, float apexRadius,
-              int durationMillis = 10000, bool depthEnabled = true);
+              int durationMillis = 0, bool depthEnabled = true);
 
     /**
      Wireframe box from the eight points that define it.
@@ -249,7 +241,7 @@ namespace NJLICRenderer
       void box(const glm::vec3 &p0, const glm::vec3 &p1, const glm::vec3 &p2, const glm::vec3 &p3,
                const glm::vec3 &p4, const glm::vec3 &p5, const glm::vec3 &p6, const glm::vec3 &p7,
              const glm::vec3 &color,
-             int durationMillis = 10000,
+             int durationMillis = 0,
              bool depthEnabled = true);
 
     /**
@@ -264,7 +256,7 @@ namespace NJLICRenderer
      @param depthEnabled <#depthEnabled description#>
      */
     void box(const glm::vec3 &center, const glm::vec3 &color, float width,
-             float height, float depth, int durationMillis = 10000,
+             float height, float depth, int durationMillis = 0,
              bool depthEnabled = true);
 
     /**
@@ -277,7 +269,7 @@ namespace NJLICRenderer
      @param depthEnabled <#depthEnabled description#>
      */
     void aabb(const glm::vec3 &mins, const glm::vec3 &maxs,
-              const glm::vec3 &color, int durationMillis = 10000,
+              const glm::vec3 &color, int durationMillis = 0,
               bool depthEnabled = true);
 
     /**
@@ -293,7 +285,7 @@ namespace NJLICRenderer
      */
       void frustum(const glm::mat4 &view, const glm::mat4 &proj,
                  const glm::vec3 &color,
-                 int durationMillis = 10000,
+                 int durationMillis = 0,
                  bool depthEnabled = true);
 
     /**
@@ -307,7 +299,7 @@ namespace NJLICRenderer
      @param depthEnabled <#depthEnabled description#>
      */
     void vertexNormal(const glm::vec3 &origin, const glm::vec3 &normal,
-                      float length, int durationMillis = 10000,
+                      float length, int durationMillis = 0,
                       bool depthEnabled = true);
 
     /**
@@ -326,7 +318,7 @@ namespace NJLICRenderer
      */
     void tangentBasis(const glm::vec3 &origin, const glm::vec3 &normal,
                       const glm::vec3 &tangent, const glm::vec3 &bitangent,
-                      float lengths, int durationMillis = 10000,
+                      float lengths, int durationMillis = 0,
                       bool depthEnabled = true);
 
     /**
@@ -344,7 +336,7 @@ namespace NJLICRenderer
      @param depthEnabled <#depthEnabled description#>
      */
     void xzSquareGrid(float mins, float maxs, float y, float step,
-                      const glm::vec3 &color, int durationMillis = 10000,
+                      const glm::vec3 &color, int durationMillis = 0,
                       bool depthEnabled = true);
 
     bool processSdlEvent(SDL_Event *event);

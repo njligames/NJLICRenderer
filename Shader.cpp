@@ -9,6 +9,7 @@
 #include "Util.h"
 #include <assert.h>
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace NJLICRenderer {
     Shader::Shader()
@@ -179,10 +180,16 @@ namespace NJLICRenderer {
 
     bool Shader::setUniformValue(const std::string &uniformName,
                                  const glm::mat4x4 &value, bool transpose) {
-        //    value.getOpenGLMatrix(m_mat4Buffer);
-        memcpy(m_mat4Buffer, &value[0], sizeof(glm::mat4x4));
 
-        return setUniformValue(uniformName, m_mat4Buffer, transpose);
+        int location = getUniformLocation(uniformName);
+        Util::glErrorCheck();
+        if (location != -1) {
+            glUniformMatrix4fv(location, 1, (transpose) ? GL_TRUE : GL_FALSE,
+                               glm::value_ptr(value));
+            Util::glErrorCheck();
+            return true;
+        }
+        return false;
     }
 
     bool Shader::setUniformValue(const std::string &uniformName,
