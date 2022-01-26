@@ -12,7 +12,7 @@ target_link_libraries( ${PROJECT_NAME}-test-static ${PROJECT_NAME}-static gtest 
 target_compile_definitions(${PROJECT_NAME}-test-static PRIVATE ${${PROJECT_NAME}_DEFINITIONS})
 
 set_target_properties(${PROJECT_NAME}-test-static PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES ${PROJECT_NAME}_PUBLIC_DIRECTORIES
+        INCLUDE_DIRECTORIES ${${PROJECT_NAME}_PUBLIC_DIRECTORIES}
         )
 
 add_test(NAME ${PROJECT_NAME}-test-static COMMAND ${PROJECT_NAME}-test-static)
