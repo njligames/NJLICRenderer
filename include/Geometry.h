@@ -169,10 +169,10 @@ namespace NJLICRenderer {
 
     class Shader;
     class Camera;
-    class Node;
+    // class Node;
 
     class Geometry {
-        friend class Node;
+        // friend class Node;
         friend class Scene;
 
       public:
@@ -240,8 +240,8 @@ namespace NJLICRenderer {
 
         virtual GLenum getElementIndexType() const = 0;
 
-        void addReference(Node *node);
-        void removeReference(Node *node);
+        // void addReference(Node *node);
+        // void removeReference(Node *node);
 
         void setTransform(const unsigned long index,
                           const glm::mat4x4 &transform);
@@ -253,15 +253,15 @@ namespace NJLICRenderer {
 
         glm::mat4x4 getNormalMatrixTransform(const unsigned long index);
 
-        virtual void setOpacity(Node *node) = 0;
-        virtual void setHidden(Node *node) = 0;
-        virtual void setColorBase(Node *node) = 0;
+        // virtual void setOpacity(Node *node) = 0;
+        // virtual void setHidden(Node *node) = 0;
+        // virtual void setColorBase(Node *node) = 0;
 
         virtual GLsizei numberOfVertices() const = 0;
         virtual GLsizei numberOfIndices() const = 0;
         virtual GLsizei numberOfInstances() const;
 
-        unsigned long getGeometryIndex(Node *const node) const;
+        // unsigned long getGeometryIndex(Node *const node) const;
 
         GLfptype *m_MatrixBuffer;
         float *m_MatrixBufferFullSize;

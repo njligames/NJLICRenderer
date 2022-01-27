@@ -13,7 +13,7 @@
 #include "Shader.h"
 #include "glm/gtc/type_ptr.hpp"
 #define FORMATSTRING "{\"NJLICRenderer::DebugDrawer\":[]}"
-#include "Node.h"
+// #include "Node.h"
 #include "glm/glm.hpp"
 
 // #define ENABLE_TEXT
@@ -381,7 +381,7 @@ namespace NJLICRenderer
     {
         m_Camera = camera;
 
-        glm::mat4 transform(m_Camera->getProjectionMatrix() * m_Camera->getNodeOwner()->getWorldTransform());
+        glm::mat4 transform(m_Camera->getProjectionMatrix());// * m_Camera->getNodeOwner()->getWorldTransform());
         memcpy(m_textMat4Buffer, (float*)glm::value_ptr(transform), sizeof(float)*16);
 
         if (dd::hasPendingDraws())

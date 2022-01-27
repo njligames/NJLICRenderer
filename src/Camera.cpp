@@ -6,7 +6,6 @@
 //
 
 #include "Camera.h"
-#include "Node.h"
 #include "Shader.h"
 #include "Util.h"
 
@@ -151,7 +150,7 @@ namespace NJLICRenderer {
 
     Camera::Camera()
         : m_MatrixBuffer(new float[16]),
-          m_ProjectionMatrixBuffer(new GLfloat[16]), m_NodeOwner(NULL),
+          m_ProjectionMatrixBuffer(new GLfloat[16]), // m_NodeOwner(NULL),
           m_Near(0.1f), m_Far(3000.0f), m_Fov(45.0f), m_AspectRatio(1.0f),
           mProjectionMatrix(new glm::mat4x4()), m_ModelViewDirty(true),
           m_ProjectionDirty(true) {
@@ -234,8 +233,10 @@ namespace NJLICRenderer {
     float Camera::getAspectRatio() const { return m_AspectRatio; }
 
     glm::mat4x4 Camera::getModelView() const {
+        /*
         if (getNodeOwner())
             return getNodeOwner()->getWorldTransform();
+            */
         return glm::mat4x4(1.0);
     }
 
@@ -243,21 +244,21 @@ namespace NJLICRenderer {
         return *mProjectionMatrix;
     }
 
-    Node *const Camera::getNodeOwner() const { return m_NodeOwner; }
-
-    void Camera::setNodeOwner(Node *const node) { m_NodeOwner = node; }
 
     void Camera::lookAt(const glm::vec3 &target, const glm::vec3 &up) {
+        /*
         glm::mat4x4 _btTransform(makeLookAt(
             m_MatrixBuffer, getNodeOwner()->getOrigin().x,
             getNodeOwner()->getOrigin().y, getNodeOwner()->getOrigin().z,
             target.x, target.y, target.z, up.x, up.y, up.z));
         *mProjectionMatrix = _btTransform;
+        */
     }
 
     glm::vec3 Camera::createRay(float mouseX, float mouseY, glm::vec3 direction, glm::vec3 up) {
         // these positions must be in range [-1, 1] (!!!), not [0, width] and [0, height]
 
+        /*
         Node *node(getNodeOwner());
 
         glm::mat4 proj = glm::perspective(m_Fov, m_AspectRatio, m_Near, m_Far);
@@ -270,13 +271,15 @@ namespace NJLICRenderer {
         glm::vec3 dir = glm::normalize(glm::vec3(worldPos));
 
         return dir;
+         */
+        return glm::vec3();
     }
 
     void Camera::render(Shader *const shader, bool shouldRedraw) {
 
         if (m_ModelViewDirty || shouldRedraw) {
 //            printf("%s\n", Util::to_string(getModelView()).c_str());
-            (shader->setUniformValue("modelView", getNodeOwner()->getWorldTransform()));
+            // (shader->setUniformValue("modelView", getNodeOwner()->getWorldTransform()));
             m_ModelViewDirty = false;
         }
 

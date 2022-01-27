@@ -3,7 +3,7 @@
 //
 
 #include "Camera2.h"
-#include "Node.h"
+// #include "Node.h"
 #include "Shader.h"
 #include "DebugDrawer.h"
 #include "glm/glm.hpp"
@@ -22,19 +22,23 @@ namespace NJLICRenderer {
 
     }
 
+    /*
     void Camera2::nodeOwner(Node *node) {
         m_NodeOwner = node;
         m_ModelViewDirty = true;
         mView = glm::lookAt(m_NodeOwner->getOrigin(), glm::vec3(0,0,20), glm::vec3(0,1,0));
     }
+     */
 
     void Camera2::lookAt(const glm::vec3 &pos, const glm::vec3 &up) {
-        mView = glm::lookAt(m_NodeOwner->getOrigin(), pos, up);
+        // mView = glm::lookAt(m_NodeOwner->getOrigin(), pos, up);
         m_ModelViewDirty = true;
     }
 
+
     glm::mat4x4 Camera2::getModelView() const {
-        return m_NodeOwner->getWorldTransform() * mView;
+        // return m_NodeOwner->getWorldTransform() * mView;
+        return glm::mat4x4();
     }
 
     void Camera2::setOrtho() {
@@ -50,6 +54,7 @@ namespace NJLICRenderer {
     glm::vec3 Camera2::createRay(float mouseX, float mouseY, glm::vec3 direction, glm::vec3 up) {
         // these positions must be in range [-1, 1] (!!!), not [0, width] and [0, height]
 
+        /*
         Node *node(nodeOwner());
 
         glm::mat4 proj = mProjection;
@@ -62,6 +67,8 @@ namespace NJLICRenderer {
         glm::vec3 dir = glm::normalize(glm::vec3(worldPos));
 
         return dir;
+         */
+        return glm::vec3();
     }
     void Camera2::debugDraw(DebugDrawer *dd) {
        dd->frustum(getModelView(), getProjection(), glm::vec3(1.f, 0.f, 0.f), 100000) ;

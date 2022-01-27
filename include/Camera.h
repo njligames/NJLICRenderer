@@ -14,7 +14,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace NJLICRenderer {
-    class Node;
+    // class Node;
     class Shader;
 
     class Camera {
@@ -55,8 +55,8 @@ namespace NJLICRenderer {
 
         glm::mat4x4 getProjectionMatrix() const;
 
-        Node *const getNodeOwner() const;
-        void setNodeOwner(Node *const node);
+        // Node *const getNodeOwner() const;
+        // void setNodeOwner(Node *const node);
 
         void lookAt(const glm::vec3 &pos,
                     const glm::vec3 &up = glm::vec3(0, 1.0f, 0));
@@ -76,7 +76,7 @@ namespace NJLICRenderer {
         GLfloat *m_ModelViewMatrixBuffer;
 
         /* members */
-        Node *m_NodeOwner;
+        // Node *m_NodeOwner;
         float m_Near;
         float m_Far;
         float m_Fov;

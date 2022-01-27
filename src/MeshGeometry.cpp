@@ -7,7 +7,7 @@
 
 #include "MeshGeometry.h"
 
-#include "Node.h"
+// #include "Node.h"
 #include <iostream>
 #include <map>
 #include <sstream>
@@ -23,7 +23,7 @@
 //    set return iss.eof() && !iss.fail();
 //}
 namespace NJLICRenderer {
-    class Node;
+    // class Node;
     MeshGeometry::MeshGeometry()
         : Geometry(), m_VertexData(NULL), m_IndiceData(NULL), m_Filedata(""),
           m_NumberOfVertices(0), m_NumberOfIndices(0),
@@ -512,6 +512,7 @@ namespace NJLICRenderer {
 
     GLenum MeshGeometry::getElementIndexType() const { return GL_UNSIGNED_INT; }
 
+    /*
     void MeshGeometry::setOpacity(Node *node) {
         unsigned long index = getGeometryIndex(node);
 
@@ -574,6 +575,7 @@ namespace NJLICRenderer {
             enableVertexArrayBufferChanged(true);
         }
     }
+    */
 
     GLsizei MeshGeometry::numberOfVertices() const {
         return m_NumberOfVertices;

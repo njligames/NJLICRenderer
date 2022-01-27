@@ -11,7 +11,7 @@
 #include <iostream>
 
 #include "Camera.h"
-#include "Node.h"
+// #include "Node.h"
 #include "Shader.h"
 #include "Util.h"
 // https://en.wikipedia.org/wiki/Wavefront_.obj_file#Material_template_library
@@ -574,9 +574,11 @@ namespace NJLICRenderer {
 
     GLsizei Geometry::numberOfInstances() const { return m_NumberInstances; }
 
+    /*
     unsigned long Geometry::getGeometryIndex(Node *const node) const {
         return node->getGeometryIndex();
     }
+     */
 
     //    void computeTangentBasis(
     //                             // inputs
@@ -820,11 +822,12 @@ namespace NJLICRenderer {
         m_VertexBufferChanged = changed;
     }
 
+    /*
     void Geometry::addReference(Node *node) {
         for (unsigned long i = 0; i < m_References.size(); ++i) {
             if (!m_References[i]) {
                 m_References[i] = true;
-                node->setGeometryIndex(i);
+                /// node->setGeometryIndex(i);
                 return;
             }
         }
@@ -839,6 +842,7 @@ namespace NJLICRenderer {
             setHidden(node);
         }
     }
+    */
 
     void Geometry::setTransform(const unsigned long index,
                                 const glm::mat4x4 &transform) {

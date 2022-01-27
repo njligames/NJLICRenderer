@@ -66,17 +66,12 @@ list(APPEND ${PROJECT_NAME}_SRCS
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Geometry.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/MaterialProperty.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Node.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/MeshGeometry.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/SpriteGeometry.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Scene.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/SphereGeometry.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/BackgroundRenderer.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/DebugDrawer.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/PubSub.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/BitmapFont.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Camera2.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Color.cpp
         )
 
 list(APPEND ${PROJECT_NAME}_HDRS
@@ -85,23 +80,20 @@ list(APPEND ${PROJECT_NAME}_HDRS
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Geometry.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/MaterialProperty.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Camera.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/Node.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/MeshGeometry.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/SpriteGeometry.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/Scene.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/SphereGeometry.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/BackgroundRenderer.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/DebugDrawer.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/PubSub.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/BitmapFont.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/Camera2.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/Color.h
         )
 
 list(APPEND ${PROJECT_NAME}_SRCS_TEST ${CMAKE_CURRENT_SOURCE_DIR}/test/TestRender.cpp)
 list(APPEND ${PROJECT_NAME}_HDRS_TEST ${CMAKE_CURRENT_SOURCE_DIR}/test/TestRender.h)
-list(APPEND ${PROJECT_NAME}_SRCS_TEST ${CMAKE_CURRENT_SOURCE_DIR}/test/TestColor.cpp)
-list(APPEND ${PROJECT_NAME}_HDRS_TEST ${CMAKE_CURRENT_SOURCE_DIR}/test/TestColor.h)
+# list(APPEND ${PROJECT_NAME}_SRCS_TEST ${CMAKE_CURRENT_SOURCE_DIR}/test/TestColor.cpp)
+# list(APPEND ${PROJECT_NAME}_HDRS_TEST ${CMAKE_CURRENT_SOURCE_DIR}/test/TestColor.h)
+list(APPEND ${PROJECT_NAME}_SRCS_TEST ${CMAKE_CURRENT_SOURCE_DIR}/test/TestDebugDrawer.cpp)
+list(APPEND ${PROJECT_NAME}_HDRS_TEST ${CMAKE_CURRENT_SOURCE_DIR}/test/TestDebugDrawer.h)
 
 
 # Download and unpack googletest at configure time

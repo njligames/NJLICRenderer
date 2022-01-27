@@ -12,7 +12,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace NJLICRenderer {
-    class Node;
+    // class Node;
     class Shader;
     class DebugDrawer;
 
@@ -44,8 +44,10 @@ namespace NJLICRenderer {
         void height(const float val) { mHeight = val; m_ModelViewDirty = true;}
         float height() const { return mHeight; }
 
+        /*
         Node *nodeOwner() const { return m_NodeOwner; }
         void nodeOwner(Node *node);
+         */
 
         void lookAt(const glm::vec3 &pos, const glm::vec3 &up = glm::vec3(0, 1.0f, 0));
 
@@ -65,7 +67,7 @@ namespace NJLICRenderer {
         void render(Shader *const shader, bool shouldRedraw = false);
 
     private:
-        Node *m_NodeOwner;
+        // Node *m_NodeOwner;
         float m_Near;
         float m_Far;
         float m_Fov;

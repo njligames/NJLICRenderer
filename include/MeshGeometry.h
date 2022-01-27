@@ -66,9 +66,9 @@ class MeshGeometry : public NJLICRenderer::Geometry {
 
         virtual GLenum getElementIndexType() const;
 
-        virtual void setOpacity(Node *node);
-        virtual void setHidden(Node *node);
-        virtual void setColorBase(Node *node);
+        // virtual void setOpacity(Node *node);
+        // virtual void setHidden(Node *node);
+        // virtual void setColorBase(Node *node);
 
         virtual GLsizei numberOfVertices() const;
         virtual GLsizei numberOfIndices() const;

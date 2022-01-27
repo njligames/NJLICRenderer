@@ -120,6 +120,7 @@ f 2/1/1 4/4/1 3/2/1
         MeshGeometry::load(shader, f, numInstances);
     }
 
+    /*
     void SpriteGeometry::setSpriteAtlasFrame(Node *node, const float &xoffset,
                                              const float &yoffset,
                                              const float &xdim,
@@ -148,6 +149,7 @@ f 2/1/1 4/4/1 3/2/1
                               textureCoordDimensions);
         }
     }
+     */
 
     void SpriteGeometry::setSpriteAtlasFrame(const GLsizei instanceIdx,
                                              const float &xoffset,
