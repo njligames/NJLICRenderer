@@ -24,30 +24,32 @@ namespace NJLICRenderer
 {
 
     static const std::string textVertShaderSrc = R"(
+#version 120
 
-    attribute vec2 in_Position;
-    attribute vec2 in_TexCoords;
-    attribute vec3 in_Color;
-    
-    uniform vec2 u_screenDimensions;
-    
-    varying vec2 v_TexCoords;
-    varying vec4 v_Color;
-    
-    void main()
-    {
-        // Map to normalized clip coordinates:
-        float x = ((2.0 * (in_Position.x - 0.5)) / u_screenDimensions.x) - 1.0;
-        float y = 1.0 - ((2.0 * (in_Position.y - 0.5)) / u_screenDimensions.y);
-    
-        gl_Position = vec4(x, y, 0.0, 1.0);
-        v_TexCoords = in_TexCoords;
-        v_Color     = vec4(in_Color, 1.0);
-    }
+attribute vec2 in_Position;
+attribute vec2 in_TexCoords;
+attribute vec3 in_Color;
+
+uniform vec2 u_screenDimensions;
+
+varying vec2 v_TexCoords;
+varying vec4 v_Color;
+
+void main()
+{
+    // Map to normalized clip coordinates:
+    float x = ((2.0 * (in_Position.x - 0.5)) / u_screenDimensions.x) - 1.0;
+    float y = 1.0 - ((2.0 * (in_Position.y - 0.5)) / u_screenDimensions.y);
+
+    gl_Position = vec4(x, y, 0.0, 1.0);
+    v_TexCoords = in_TexCoords;
+    v_Color     = vec4(in_Color, 1.0);
+}
     
     )";
 
     static const std::string textFragShaderSrc = R"(
+#version 120
 
 #ifdef GL_ES
     precision mediump float;
@@ -60,28 +62,29 @@ namespace NJLICRenderer
     
     void main()
     {
-        vec4 out_FragColor = texture2D(u_glyphTexture, v_TexCoords) * v_Color;
-        gl_FragColor = vec4(1.0, 0, 0, 1.0);
+        gl_FragColor = v_Color;
+        gl_FragColor.a = texture2D(u_glyphTexture, v_TexCoords).r;
     }
     
     )";
 
     static const std::string linePointVertShaderSource = R"(
-    
-    attribute vec3 in_Position;
-    attribute vec4 in_ColorPointSize;
-    
-    uniform mat4 modelView;
-    uniform mat4 projection;
-    
-    varying vec4 v_Color;
-    
-    void main()
-    {
-        gl_Position  = (modelView * projection) * vec4(in_Position, 1.0);
-        gl_PointSize = in_ColorPointSize.w;
-        v_Color      = vec4(in_ColorPointSize.xyz, 1.0);
-    }
+#version 120
+
+attribute vec3 in_Position;
+attribute vec4 in_ColorPointSize;
+
+uniform mat4 modelView;
+uniform mat4 projection;
+
+varying vec4 v_Color;
+
+void main()
+{
+    gl_Position  = (modelView * projection) * vec4(in_Position, 1.0);
+    gl_PointSize = in_ColorPointSize.w;
+    v_Color      = vec4(in_ColorPointSize.xyz, 1.0);
+}
     
     )";
 
@@ -282,6 +285,7 @@ namespace NJLICRenderer
         glBindVertexArray_NJLIC(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
+        Util::glErrorCheck();
 #endif
     }
 
@@ -337,22 +341,20 @@ namespace NJLICRenderer
 
             dd::initialize(this);
 
-            // glEnable(GL_CULL_FACE);
-            // glEnable(GL_DEPTH_TEST);
-            // glDisable(GL_BLEND);
+            glEnable(GL_CULL_FACE);
+            glEnable(GL_DEPTH_TEST);
+            glDisable(GL_BLEND);
 
             // This has to be enabled since the point drawing shader will
             // use gl_PointSize.
 
 //            glEnable(GL_PROGRAM_POINT_SIZE);
-
-            m_LinePointShaderProgram->load(linePointVertShaderSource,
-                                           linePointFragShaderSource);
-#ifdef ENABLE_TEXT
-            m_TextShaderProgram->load(textVertShaderSrc, textFragShaderSrc);
-#endif
+            glEnable(GL_PROGRAM_POINT_SIZE_EXT);
 
 
+
+
+            setupShaderPrograms();
             setupVertexBuffers();
 
 #ifdef IMGUI
@@ -433,7 +435,7 @@ namespace NJLICRenderer
 
         dd::projectedText(
             str.c_str(), _pos, _color, _vpMatrix, 0, 0,
-            1.f, 1.f, scaling, durationMillis);
+            mWidth, mHeight, scaling, durationMillis);
     }
 
     void DebugDrawer::axisTriad(const glm::mat4 &transform, float size,
@@ -625,6 +627,81 @@ namespace NJLICRenderer
                          depthEnabled);
     }
 
+    void DebugDrawer::setupShaderPrograms()
+    {
+
+//        std::printf("> DDRenderInterfaceCoreGL::setupShaderPrograms()\n");
+
+        //
+        // Line/point drawing shader:
+        //
+        {
+            m_LinePointShaderProgram->load(linePointVertShaderSource,
+                                           linePointFragShaderSource);
+//            GLuint linePointVS = glCreateShader(GL_VERTEX_SHADER);
+//            glShaderSource(linePointVS, 1, &linePointVertShaderSrc, nullptr);
+//            compileShader(linePointVS);
+//
+//            GLint linePointFS = glCreateShader(GL_FRAGMENT_SHADER);
+//            glShaderSource(linePointFS, 1, &linePointFragShaderSrc, nullptr);
+//            compileShader(linePointFS);
+//
+//            linePointProgram = glCreateProgram();
+//            glAttachShader(linePointProgram, linePointVS);
+//            glAttachShader(linePointProgram, linePointFS);
+//
+//            glBindAttribLocation(linePointProgram, 0, "in_Position");
+//            glBindAttribLocation(linePointProgram, 1, "in_ColorPointSize");
+//            linkProgram(linePointProgram);
+//
+//            linePointProgram_MvpMatrixLocation = glGetUniformLocation(linePointProgram, "u_MvpMatrix");
+//            if (linePointProgram_MvpMatrixLocation < 0)
+//            {
+//                errorF("Unable to get u_MvpMatrix uniform location!");
+//            }
+//            checkGLError(__FILE__, __LINE__);
+        }
+
+        //
+        // Text rendering shader:
+        //
+        {
+#ifdef ENABLE_TEXT
+            m_TextShaderProgram->load(textVertShaderSrc, textFragShaderSrc);
+#endif
+//            GLuint textVS = glCreateShader(GL_VERTEX_SHADER);
+//            glShaderSource(textVS, 1, &textVertShaderSrc, nullptr);
+//            compileShader(textVS);
+//
+//            GLint textFS = glCreateShader(GL_FRAGMENT_SHADER);
+//            glShaderSource(textFS, 1, &textFragShaderSrc, nullptr);
+//            compileShader(textFS);
+//
+//            textProgram = glCreateProgram();
+//            glAttachShader(textProgram, textVS);
+//            glAttachShader(textProgram, textFS);
+//
+//            glBindAttribLocation(textProgram, 0, "in_Position");
+//            glBindAttribLocation(textProgram, 1, "in_TexCoords");
+//            glBindAttribLocation(textProgram, 2, "in_Color");
+//            linkProgram(textProgram);
+//
+//            textProgram_GlyphTextureLocation = glGetUniformLocation(textProgram, "u_glyphTexture");
+//            if (textProgram_GlyphTextureLocation < 0)
+//            {
+//                errorF("Unable to get u_glyphTexture uniform location!");
+//            }
+//
+//            textProgram_ScreenDimensions = glGetUniformLocation(textProgram, "u_screenDimensions");
+//            if (textProgram_ScreenDimensions < 0)
+//            {
+//                errorF("Unable to get u_screenDimensions uniform location!");
+//            }
+//
+//            checkGLError(__FILE__, __LINE__);
+        }
+    }
+
     void DebugDrawer::setupVertexBuffers()
     {
         // std::cout << "> DDRenderInterfaceCoreGL::setupVertexBuffers()" <<
@@ -750,7 +827,7 @@ namespace NJLICRenderer
             Util::glErrorCheck();
             glVertexAttribPointer(
                 /* index     = */ in_Color,
-                /* size      = */ 3,
+                /* size      = */ 4,
                 /* type      = */ GL_FLOAT,
                 /* normalize = */ GL_FALSE,
                 /* stride    = */ sizeof(dd::DrawVertex),

@@ -347,6 +347,7 @@ namespace NJLICRenderer
       
 
   protected:
+    void setupShaderPrograms();
     void setupVertexBuffers();
 
 #ifdef IMGUI

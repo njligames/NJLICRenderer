@@ -50,7 +50,7 @@ class TestDebugDrawer : public TestRender {
         glm::mat4 transform = glm::mat4(1.0);
         float size = 0.1f;
         float length = 1.0f;
-        int holdView = 200;
+        int holdView = 1;
         float radius = 1.f;
         float numSteps = 20.0f;
         glm::vec3 normal = glm::vec3(0, 0, -1);

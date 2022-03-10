@@ -51,8 +51,7 @@ void TestDebugDrawer::TearDown() {
 
 TEST_F(TestDebugDrawer, point) {
     mInit = [this]() {
-        glPointSize(5);
-        mDebugDrawer->point(mBuilder.zero_3d, mBuilder.red, 10.0, mBuilder.durationMills);
+        mDebugDrawer->point(mBuilder.zero_3d, mBuilder.red, 100.0, mBuilder.durationMills);
 
     };
 
@@ -73,6 +72,8 @@ TEST_F(TestDebugDrawer, line) {
 
 TEST_F(TestDebugDrawer, screenText) {
     mInit = [this]() {
+        //NOTE: Cannot see it drawn.
+        assert(false && "need to fix");
         mDebugDrawer->screenText("James Folk", glm::vec3(10, 10, 0.0f), mBuilder.red, 1.0f);
     };
 
@@ -85,7 +86,8 @@ TEST_F(TestDebugDrawer, projectedText) {
     };
     mUpdateFunction = [this](float step) {
         //NOTE: Cannot see it drawn.
-        mDebugDrawer->projectedText("James Folk", glm::vec3(0,0,-5), mBuilder.red, mCamera->getViewMat() * mCamera->getProjMat(), 1.f, 100);
+        assert(false && "need to fix");
+        mDebugDrawer->projectedText("James Folk", glm::vec3(0,0,-5), mBuilder.red,  mCamera->getProjMat() * mCamera->getViewMat(), 1.f, 100);
     };
 
     this->holdView(mBuilder.holdView);
@@ -169,17 +171,17 @@ TEST_F(TestDebugDrawer, box) {
         float side = mBuilder.radius / 2.0f;
         float depth = (mBuilder.radius * 5.0f) / 2.0f;
 
-        glm::vec3 p0 = glm::vec3(side, side, -depth) + mBuilder.zero_3d;
-        glm::vec3 p1 = glm::vec3(side, -side, -depth) + mBuilder.zero_3d;
-        glm::vec3 p2 = glm::vec3(-side, side, -depth) + mBuilder.zero_3d;
-        glm::vec3 p3 = glm::vec3(-side, -side, -depth) + mBuilder.zero_3d;
+        glm::vec3 p0 = glm::vec3(-side, side, depth) + mBuilder.zero_3d;
+        glm::vec3 p1 = glm::vec3(-side, side, -depth) + mBuilder.zero_3d;
+        glm::vec3 p2 = glm::vec3(side, side, -depth) + mBuilder.zero_3d;
+        glm::vec3 p3 = glm::vec3(side, side, depth) + mBuilder.zero_3d;
 
-        glm::vec3 p4 = glm::vec3(side, side, depth) + mBuilder.zero_3d;
-        glm::vec3 p5 = glm::vec3(side, -side, depth) + mBuilder.zero_3d;
-        glm::vec3 p6 = glm::vec3(-side, side, depth) + mBuilder.zero_3d;
-        glm::vec3 p7 = glm::vec3(-side, -side, depth) + mBuilder.zero_3d;
+        glm::vec3 p4 = glm::vec3(-side, -side, depth) + mBuilder.zero_3d;
+        glm::vec3 p5 = glm::vec3(-side, -side, -depth) + mBuilder.zero_3d;
+        glm::vec3 p6 = glm::vec3(side, -side, -depth) + mBuilder.zero_3d;
+        glm::vec3 p7 = glm::vec3(side, -side, depth) + mBuilder.zero_3d;
 
-        mDebugDrawer->point(p0, mBuilder.red);
+//        mDebugDrawer->point(p0, mBuilder.red);
 
         mDebugDrawer->box(p0, p1, p2, p3, p4, p5, p6, p7, mBuilder.red, mBuilder.durationMills);
     };
@@ -217,8 +219,9 @@ TEST_F(TestDebugDrawer, frustum) {
     };
     mUpdateFunction = [this](float step) {
         //NOTE: Cannot see it drawn.
+        assert(false && "need to fix");
         auto view = glm::translate(mCamera->getViewMat(), mBuilder.zero_3d);
-        mDebugDrawer->frustum(view, mCamera->getProjMat(), mBuilder.red, 500);
+        mDebugDrawer->frustum(view, mCamera->getProjMat(), mBuilder.red, 1);
     };
 
     this->holdView(mBuilder.holdView);
