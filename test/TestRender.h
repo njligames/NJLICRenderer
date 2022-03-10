@@ -72,7 +72,6 @@ public:
     std::function<void()> mUnInit = []() {};
     std::function<void(int, int, float, float, int)> mMouse = [](int button, int eventType, float x, float y, int clicks) {};
 
-
   public:
     void update(double step);
     void render();

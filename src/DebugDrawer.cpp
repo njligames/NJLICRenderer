@@ -16,7 +16,7 @@
 // #include "Node.h"
 #include "glm/glm.hpp"
 
-// #define ENABLE_TEXT
+#define ENABLE_TEXT
 
 //#include "uSynergy.h"
 
@@ -24,8 +24,7 @@ namespace NJLICRenderer
 {
 
     static const std::string textVertShaderSrc = R"(
-    #version 100
-    
+
     attribute vec2 in_Position;
     attribute vec2 in_TexCoords;
     attribute vec3 in_Color;
@@ -49,8 +48,7 @@ namespace NJLICRenderer
     )";
 
     static const std::string textFragShaderSrc = R"(
-    #version 100
-    
+
 #ifdef GL_ES
     precision mediump float;
 #endif
@@ -88,7 +86,8 @@ namespace NJLICRenderer
     )";
 
     static const std::string linePointFragShaderSource = R"(
-    
+#version 120
+
 #ifdef GL_ES
     precision mediump float;
 #endif
@@ -381,7 +380,8 @@ namespace NJLICRenderer
     {
         m_Camera = camera;
 
-        glm::mat4 transform(m_Camera->getProjectionMatrix());// * m_Camera->getNodeOwner()->getWorldTransform());
+
+        glm::mat4 transform(m_Camera->getProjMat() * m_Camera->getViewMat());
         memcpy(m_textMat4Buffer, (float*)glm::value_ptr(transform), sizeof(float)*16);
 
         if (dd::hasPendingDraws())
@@ -423,17 +423,17 @@ namespace NJLICRenderer
         dd::screenText(str.c_str(), _pos, _color, scaling, durationMillis);
     }
 
-    void DebugDrawer::projectedText(const std::string &str,
-                                         const glm::vec3 &pos,
-                                         const glm::vec3 &color, float scaling,
-                                         int durationMillis)
+    void DebugDrawer::projectedText(const std::string &str, const glm::vec3 &pos,
+                                    const glm::vec3 &color, glm::mat4 vpMatrix,
+                                    float scaling, int durationMillis)
     {
         const float _pos[] = {pos.x, pos.y, pos.z};
         const float _color[] = {color.x, color.y, color.z};
+        const float *_vpMatrix = (const float*)glm::value_ptr(vpMatrix);
 
         dd::projectedText(
-            str.c_str(), _pos, _color, m_textMat4Buffer, 0, 0,
-            mWidth, mHeight);
+            str.c_str(), _pos, _color, _vpMatrix, 0, 0,
+            1.f, 1.f, scaling, durationMillis);
     }
 
     void DebugDrawer::axisTriad(const glm::mat4 &transform, float size,
@@ -529,17 +529,20 @@ namespace NJLICRenderer
                                const glm::vec3 &color, int durationMillis,
                                bool depthEnabled)
     {
-        //            const float _from[] = {from.x, from.y, from.z};
-        //            const float _to[] = {to.x, to.y, to.z};
-        //            const float _color[] = {color.x, color.y, color.z};
+        const ddVec3 _points[] = {
+                {p0.x, p0.y, p0.z},
+                {p1.x, p1.y, p1.z},
+                {p2.x, p2.y, p2.z},
+                {p3.x, p3.y, p3.z},
 
-        const float _points[] = {p0.x, p0.y, p0.z, p1.x, p1.y, p1.z,
-                                 p2.x, p2.y, p2.z, p3.x, p3.y, p3.z,
-                                 p4.x, p4.y, p4.z, p5.x, p5.y, p5.z,
-                                 p6.x, p6.y, p6.z, p7.x, p7.y, p7.z};
+                {p4.x, p4.y, p4.z},
+                {p5.x, p5.y, p5.z},
+                {p6.x, p6.y, p6.z},
+                {p7.x, p7.y, p7.z}
+        };
         const float _color[] = {color.x, color.y, color.z};
 
-        //            dd::box(_points, _color, durationMillis, depthEnabled);
+        dd::box(_points, _color, durationMillis, depthEnabled);
     }
 
     void DebugDrawer::box(const glm::vec3 &center, const glm::vec3 &color,
@@ -569,13 +572,19 @@ namespace NJLICRenderer
                                    const glm::vec3 &color, int durationMillis,
                                    bool depthEnabled)
     {
-        glm::mat4 invClipMatrix = (proj * view); //.inverse();
+
+
+
+
+
+
+        glm::mat4 invClipMatrix = glm::inverse(proj * view);
 
         const float *_invClipMatrix = (const float*)glm::value_ptr(invClipMatrix);
 
         const float _color[] = {color.x, color.y, color.z};
 
-        dd::frustum(_invClipMatrix, _color);
+        dd::frustum(_invClipMatrix, _color, durationMillis, depthEnabled);
     }
 
     void DebugDrawer::vertexNormal(const glm::vec3 &origin,

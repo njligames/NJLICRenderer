@@ -1,291 +1,134 @@
 //
 //  Camera.cpp
+//  JLIGameEngineTest
 //
-//  Created by James Folk on 1/17/22.
-//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
+//  Created by James Folk on 11/22/14.
+//  Copyright (c) 2014 James Folk. All rights reserved.
 //
+
 
 #include "Camera.h"
 #include "Shader.h"
-#include "Util.h"
+
+#define GLM_FORCE_RADIANS
 
 namespace NJLICRenderer {
-    static inline glm::mat4x4 setFrom4x4Matrix(const float *m) {
-        glm::mat4 _m;
-
-        _m[0][0] = m[0];
-        _m[1][0] = m[1];
-        _m[2][0] = m[2];
-        _m[3][0] = m[3];
-
-        _m[0][1] = m[4];
-        _m[1][1] = m[5];
-        _m[2][1] = m[6];
-        _m[3][1] = m[7];
-
-        _m[0][2] = m[8];
-        _m[1][2] = m[9];
-        _m[2][2] = m[10];
-        _m[3][2] = m[11];
-
-        _m[0][3] = m[12];
-        _m[1][3] = m[13];
-        _m[2][3] = m[14];
-        _m[3][3] = m[15];
-
-        return _m;
+    Camera::Camera() {
+        ar = 4.0f / 3.0f;
+#ifdef GLM_FORCE_RADIANS
+        angle = 0.785398f; //45 degrees
+#else
+        angle = 45.0f; //45 degrees
+#endif
+        near = 0.1f;
+        far = 10000.0f;
     }
 
-    glm::mat4x4 Camera::makeVRFrustum(float *matrixBuffer, float right, float left, float bottom, float top, float near, float far) {
+    void Camera::render(Shader *shader, bool shouldRedraw)
+    {
+        genViewMat();
+        genProjMat();
+        if (shader)
+        {
+            bool m_ModelViewDirty(true);
+            bool m_ProjectionDirty(true);
 
-        memset(matrixBuffer, 0, sizeof(float) * 16);
-        float fov_y(120.0f);
-        float w(right - left);
-        float h(top - bottom);
-        float a = w/ h;
-        float ta = tan(fov_y / 2.f);
-
-        matrixBuffer[0] = 1./(ta*a);
-        matrixBuffer[1] = 0;
-        matrixBuffer[2] = 0;
-        matrixBuffer[3] = 0;
-        matrixBuffer[4] = 0;
-        matrixBuffer[5] = 1./ta;
-        matrixBuffer[6] = 0;
-        matrixBuffer[7] = 0;
-        matrixBuffer[8] = 0;
-        matrixBuffer[9] = 0;
-        matrixBuffer[10] = -(far+near) / (far - near);
-        matrixBuffer[12] = -1;
-        matrixBuffer[13] = 0;
-        matrixBuffer[14] = -2*far*near/(far-near);
-        matrixBuffer[15] = 0;
-
-        return setFrom4x4Matrix(matrixBuffer);
-    }
-
-    glm::mat4x4 Camera::makeFrustum(float *matrixBuffer, float fov,
-                                    float aspect, float nearDist, float farDist,
-                                    bool leftHanded) {
-        memset(matrixBuffer, 0, sizeof(float) * 16);
-        //
-        // General form of the Projection Matrix
-        //
-        // uh = Cot( fov/2 ) == 1/Tan(fov/2)
-        // uw / uh = 1/aspect
-        //
-        //   uw         0       0       0
-        //    0        uh       0       0
-        //    0         0      f/(f-n)  1
-        //    0         0    -fn/(f-n)  0
-        //
-        // Make result to be identity first
-
-        //    0         1       2       3
-        //    4         5       6       7
-        //    8         9      10      11
-        //   12        13      14      15
-
-        // check for bad parameters to avoid divide by zero:
-        // if found, assert and return an identity matrix.
-        if (fov <= 0 || aspect == 0) {
-            return glm::mat4x4(1.0);
-        }
-
-        float frustumDepth = farDist - nearDist;
-        float oneOverDepth = 1.0f / frustumDepth;
-
-        matrixBuffer[5] = 1.0f / tan(0.5f * glm::radians(fov));
-        matrixBuffer[0] =
-            (leftHanded ? 1.0f : -1.0f) * matrixBuffer[5] / aspect;
-        matrixBuffer[10] = farDist * oneOverDepth;
-        matrixBuffer[14] = (-farDist * nearDist) * oneOverDepth;
-        matrixBuffer[11] = 1.0f;
-        matrixBuffer[15] = 0;
-
-        return setFrom4x4Matrix(matrixBuffer);
-    }
-
-    glm::mat4x4 Camera::makeLookAt(float *buffer, float eyeX, float eyeY,
-                                   float eyeZ, float centerX, float centerY,
-                                   float centerZ, float upX, float upY,
-                                   float upZ) {
-        assert(buffer);
-
-        glm::vec3 ev(eyeX, eyeY, eyeZ);
-        glm::vec3 cv(centerX, centerY, centerZ);
-        glm::vec3 uv(upX, upY, upZ);
-        //        glm::vec3 n((ev + -cv).normalized());
-        glm::vec3 n(glm::normalize(ev + -cv));
-        //        glm::vec3 u((uv.cross(n).normalized()));
-        glm::vec3 u(glm::normalize(glm::cross(uv, n)));
-        //        glm::vec3 v(n.cross(u));
-        glm::vec3 v(glm::cross(n, u));
-
-        buffer[0] = u.x;
-        buffer[1] = v.x;
-        buffer[2] = n.x;
-        buffer[3] = 0.0f;
-        buffer[4] = u.y;
-        buffer[5] = v.y;
-        buffer[6] = n.y;
-        buffer[7] = 0.0f;
-        buffer[8] = u.z;
-        buffer[9] = v.z;
-        buffer[10] = n.z;
-        buffer[11] = 0.0f;
-        //        buffer[12] = (-u).dot(ev);
-        buffer[12] = glm::dot(-u, ev);
-
-        //        buffer[13] = (-v).dot(ev);
-        buffer[13] = glm::dot(-v, ev);
-
-        //        buffer[14] = (-n).dot(ev);
-        buffer[14] = glm::dot(-n, ev);
-
-        buffer[15] = 1.0f;
-
-        return setFrom4x4Matrix(buffer);
-    }
-
-    Camera::Camera()
-        : m_MatrixBuffer(new float[16]),
-          m_ProjectionMatrixBuffer(new GLfloat[16]), // m_NodeOwner(NULL),
-          m_Near(0.1f), m_Far(3000.0f), m_Fov(45.0f), m_AspectRatio(1.0f),
-          mProjectionMatrix(new glm::mat4x4()), m_ModelViewDirty(true),
-          m_ProjectionDirty(true) {
-        *mProjectionMatrix =
-            makeFrustum(m_ProjectionMatrixBuffer, getFov(), getAspectRatio(),
-                        getZNear(), getZFar());
-        m_ProjectionDirty = true;
-    }
-
-    Camera::~Camera() {
-
-        delete mProjectionMatrix;
-        mProjectionMatrix = NULL;
-
-        delete[] m_ProjectionMatrixBuffer;
-        m_ProjectionMatrixBuffer = NULL;
-
-        delete[] m_MatrixBuffer;
-        m_MatrixBuffer = NULL;
-    }
-
-    void Camera::setZNear(const float val) {
-        bool changed = (val != getZNear());
-
-        m_Near = val;
-
-        if (changed) {
-            *mProjectionMatrix =
-                makeFrustum(m_ProjectionMatrixBuffer, getFov(),
-                            getAspectRatio(), getZNear(), getZFar());
-            m_ProjectionDirty = true;
-        }
-    }
-
-    float Camera::getZNear() const { return m_Near; }
-
-    void Camera::setZFar(const float val) {
-        bool changed = (val != getZFar());
-
-        m_Far = val;
-
-        if (changed) {
-            *mProjectionMatrix =
-                makeFrustum(m_ProjectionMatrixBuffer, getFov(),
-                            getAspectRatio(), getZNear(), getZFar());
-            m_ProjectionDirty = true;
-        }
-    }
-
-    float Camera::getZFar() const { return m_Far; }
-
-    void Camera::setFov(const float val) {
-        bool changed = (val != getFov());
-
-        m_Fov = val;
-
-        if (changed) {
-            *mProjectionMatrix =
-                makeFrustum(m_ProjectionMatrixBuffer, getFov(),
-                            getAspectRatio(), getZNear(), getZFar());
-            m_ProjectionDirty = true;
-        }
-    }
-
-    float Camera::getFov() const { return m_Fov; }
-
-    void Camera::setAspectRatio(const float val) {
-        bool changed = (val != getAspectRatio());
-
-        m_AspectRatio = val;
-
-        if (changed) {
-            *mProjectionMatrix =
-                makeFrustum(m_ProjectionMatrixBuffer, getFov(),
-                            getAspectRatio(), getZNear(), getZFar());
-            m_ProjectionDirty = true;
-        }
-    }
-
-    float Camera::getAspectRatio() const { return m_AspectRatio; }
-
-    glm::mat4x4 Camera::getModelView() const {
-        /*
-        if (getNodeOwner())
-            return getNodeOwner()->getWorldTransform();
+            /*
+            if (m_OrthographicDirty || shouldRedraw)
+            {
+                GLuint orthographic = (m_Orthographic == true) ? 1 : 0;
+                if (shader->setUniformValue("orthographicCamera", orthographic))
+                {
+                    m_OrthographicDirty = false;
+                }
+            }
             */
-        return glm::mat4x4(1.0);
-    }
 
-    glm::mat4x4 Camera::getProjectionMatrix() const {
-        return *mProjectionMatrix;
-    }
+            if (m_ModelViewDirty || shouldRedraw)
+            {
+                if (shader->setUniformValue("modelView", this->getViewMat()))
+                {
+                    m_ModelViewDirty = false;
+                }
+            }
 
-
-    void Camera::lookAt(const glm::vec3 &target, const glm::vec3 &up) {
-        /*
-        glm::mat4x4 _btTransform(makeLookAt(
-            m_MatrixBuffer, getNodeOwner()->getOrigin().x,
-            getNodeOwner()->getOrigin().y, getNodeOwner()->getOrigin().z,
-            target.x, target.y, target.z, up.x, up.y, up.z));
-        *mProjectionMatrix = _btTransform;
-        */
-    }
-
-    glm::vec3 Camera::createRay(float mouseX, float mouseY, glm::vec3 direction, glm::vec3 up) {
-        // these positions must be in range [-1, 1] (!!!), not [0, width] and [0, height]
-
-        /*
-        Node *node(getNodeOwner());
-
-        glm::mat4 proj = glm::perspective(m_Fov, m_AspectRatio, m_Near, m_Far);
-        glm::mat4 view = glm::lookAt(node->getOrigin(), direction, up);
-
-        glm::mat4 invVP = glm::inverse(proj * view);
-        glm::vec4 screenPos = glm::vec4(mouseX, -mouseY, 1.0f, 1.0f);
-        glm::vec4 worldPos = invVP * screenPos;
-
-        glm::vec3 dir = glm::normalize(glm::vec3(worldPos));
-
-        return dir;
-         */
-        return glm::vec3();
-    }
-
-    void Camera::render(Shader *const shader, bool shouldRedraw) {
-
-        if (m_ModelViewDirty || shouldRedraw) {
-//            printf("%s\n", Util::to_string(getModelView()).c_str());
-            // (shader->setUniformValue("modelView", getNodeOwner()->getWorldTransform()));
-            m_ModelViewDirty = false;
-        }
-
-        if (m_ProjectionDirty || shouldRedraw) {
-            (shader->setUniformValue("projection", m_ProjectionMatrixBuffer));
-            m_ProjectionDirty = false;
+            if (m_ProjectionDirty || shouldRedraw)
+            {
+                if (shader->setUniformValue("projection",
+                                            this->getProjMat()))
+                {
+                    m_ProjectionDirty = false;
+                }
+            }
         }
     }
-} // namespace NJLICRenderer
+
+    void Camera::setCameraPos(const glm::vec3& v)
+    {
+        pos = v;
+    }
+
+    void Camera::setCameraFocus(const glm::vec3& v)
+    {
+        fp = v;
+    }
+
+    void Camera::setCameraUpVec(const glm::vec3& v)
+    {
+        up = v;
+    }
+
+    void Camera::setAspectRatio(const float ar)
+    {
+        this->ar = ar;
+    }
+
+    void Camera::setViewAngle(const float a)
+    {
+        angle = a;
+    }
+
+    void Camera::setNearClipDist(const float d)
+    {
+        near = d;
+    }
+
+    void Camera::setFarClipDist(const float d)
+    {
+        far = d;
+    }
+
+    glm::mat4 Camera::getViewMat()
+    {
+        return view;
+    }
+
+    float* Camera::getViewMatRef()
+    {
+        return glm::value_ptr(view);
+    }
+
+    glm::mat4 Camera::getProjMat()
+    {
+        return proj;
+    }
+
+    float* Camera::getProjMatRef()
+    {
+        return glm::value_ptr(proj);
+    }
+
+    void Camera::genViewMat()
+    {
+        fp = glm::vec3(0,0,-1);
+        up = glm::vec3(0,1,0);
+        view = glm::lookAt(pos, fp, up);
+    }
+
+    void Camera::genProjMat()
+    {
+        proj = glm::perspective(angle, ar, near, far);
+//        proj = glm::frustum(-1920.f / 2.f, 1920.f / 2.f, -1920.f / 2.f, 1920.f / 2.f, near, far);
+    }
+
+};

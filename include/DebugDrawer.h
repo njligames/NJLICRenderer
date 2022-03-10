@@ -116,8 +116,8 @@ namespace NJLICRenderer
      @param durationMillis <#durationMillis description#>
      */
     void projectedText(const std::string &str, const glm::vec3 &pos,
-                       const glm::vec3 &color, float scaling = 1.0f,
-                       int durationMillis = 0);
+                       const glm::vec3 &color, glm::mat4 vpMatrix,
+                       float scaling = 1.0f, int durationMillis = 0);
 
     /**
      Add a set of three coordinate axis depicting the position and orientation

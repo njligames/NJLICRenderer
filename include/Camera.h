@@ -1,90 +1,68 @@
 //
-//  Camera.hpp
+//  Camera.h
+//  JLIGameEngineTest
 //
-//  Created by James Folk on 1/17/22.
-//  Copyright © 2016 NJLICGames Ltd. All rights reserved.
+//  Created by James Folk on 11/22/14.
+//  Copyright (c) 2014 James Folk. All rights reserved.
 //
 
-#ifndef Camera_hpp
-#define Camera_hpp
+#ifndef __JLIGameEngineTest__Camera__
+#define __JLIGameEngineTest__Camera__
 
-#include "GraphicsPlatform.h"
-
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <memory>
 
-namespace NJLICRenderer {
-    // class Node;
+namespace NJLICRenderer
+{
     class Shader;
 
     class Camera {
-        friend class Geometry;
-        friend class DebugDrawer;
-
-      public:
-        /* static */
-
-        static glm::mat4x4 makeVRFrustum(float *buffer, float right, float left, float bottom, float top, float near, float far);
-        static glm::mat4x4 makeFrustum(float *buffer, float fov, float aspect,
-                                       float nearDist, float farDist,
-                                       bool leftHanded = true);
-        static glm::mat4x4 makeLookAt(float *buffer, float eyeX, float eyeY,
-                                      float eyeZ, float centerX, float centerY,
-                                      float centerZ, float upX, float upY,
-                                      float upZ);
-
-        /* members */
+    public:
+        //Construction/Destruction
         Camera();
-        Camera(const Camera &rhs);
-        const Camera &operator=(const Camera &rhs);
-        ~Camera();
+        //Nothing to clean up
 
-        void setZNear(const float val);
-        float getZNear() const;
 
-        void setZFar(const float val);
-        float getZFar() const;
+        void render(Shader *shader, bool shouldRedraw);
 
-        void setFov(const float val);
-        float getFov() const;
+        //View settings
+        void setCameraPos(const glm::vec3& v);
+        void setCameraFocus(const glm::vec3& v);
+        void setCameraUpVec(const glm::vec3& v);
 
-        void setAspectRatio(const float val);
-        float getAspectRatio() const;
+        //Projection settings
+        void setAspectRatio(const float ar);
+        void setViewAngle(const float a);
+        void setNearClipDist(const float d);
+        void setFarClipDist(const float d);
 
-        glm::mat4x4 getModelView() const;
+        //Get matrix data
+        glm::mat4 getViewMat();
+        float* getViewMatRef();
+        glm::mat4 getProjMat();
+        float* getProjMatRef();
 
-        glm::mat4x4 getProjectionMatrix() const;
+        //Create matrices
+        void genViewMat();
+        void genProjMat();
 
-        // Node *const getNodeOwner() const;
-        // void setNodeOwner(Node *const node);
+        //View matrix variables
+        glm::vec3 pos; ///< position of the camera
+        glm::vec3 fp; ///< focal point of the camera
+        glm::vec3 up; ///< the up direction for the camera
 
-        void lookAt(const glm::vec3 &pos,
-                    const glm::vec3 &up = glm::vec3(0, 1.0f, 0));
+        //Projection matrix variables
+        float ar; ///< aspect ratio
+        float angle; ///< angle in radians
+        float near; ///< near clipping distance
+        float far; ///< far clipping distance
 
-        // // these positions must be in range [-1, 1] (!!!), not [0, width] and [0, height]
-        // float mouseX = getMousePositionX() / (getWindowWidth()  * 0.5f) - 1.0f;
-        // float mouseY = getMousePositionY() / (getWindowHeight() * 0.5f) - 1.0f;
-        glm::vec3 createRay(float mouseX, float mouseY, glm::vec3 direction, glm::vec3 up) ;
-
-      protected:
-        void render(Shader *const shader, bool shouldRedraw = false);
-
-      private:
-        /* static */
-        float *m_MatrixBuffer;
-        GLfloat *m_ProjectionMatrixBuffer;
-        GLfloat *m_ModelViewMatrixBuffer;
-
-        /* members */
-        // Node *m_NodeOwner;
-        float m_Near;
-        float m_Far;
-        float m_Fov;
-        float m_AspectRatio;
-        glm::mat4x4 *mProjectionMatrix;
-        bool m_ModelViewDirty;
-        bool m_ProjectionDirty;
+        //functional matrices
+        glm::mat4 view; ///< View matrix for OpenGL
+        glm::mat4 proj; ///< Projection matrix for OpenGL
     };
-} // namespace NJLICRenderer
+}
 
-#endif /* Camera_hpp */
+#endif /* defined(__JLIGameEngineTest__Camera__) */
